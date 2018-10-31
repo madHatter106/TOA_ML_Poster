@@ -35,7 +35,7 @@
 \usepackage{wrapfig} % Allows wrapping text around tables and figures
 \usepackage{subcaption}
 \usepackage{framed}
-
+\bibliographystyle{unsrt}
 \begin{document}
 
 %----------------------------------------------------------------------------------------
@@ -67,72 +67,64 @@
 
 \section*{Introduction}
 
-The advent of satellite oceanography has generated tremendous incite in our understanding of global biogeophysical processes in the ocean by providing a synoptic view of phytoplankton distribution dynamics. One of the principle obstacles in this endeavor is the signal contributed to the sensed light field by the atmosphere. Some of this contribution, such as Rayleigh scattering, is straightforward to correct for. However, light contribution by spatio-temporally  variable aerosol distribution has so far been addressed by removing a modelled approximation of its contribution to estimate the water signal. This works  well in the open ocean, but runs into trouble in coastal regions, where both marine and atmospheric layers are often optically complex. 
+The advent of satellite oceanography has generated tremendous insight into marine biogeophysical processes by providing a global view of phytoplankton distribution dynamics, with measurable impact on various fields like ecology, fisheries, climate science. One of the principle obstacles in this endeavor is that the water's contribution to the sensed light field is dwarfed by that of the atmosphere. Some of this, like Rayleigh scattering, is straightforward to correct for. However, light redirected to the sensor by spatially and temporally variable aerosol distribution has so far been addressed by computing a modelled approximation. This approximation works well in the open ocean, but runs into trouble in coastal regions, where both marine and atmospheric layers are often optically complex, and as yet not well understood.. 
 
-Here, we propose circumventing the atmospheric complexity of coastal areas by using \textbf{top-of-the-atmosphere radiance (TOA)} as indirect model input. We develop, and compare alternative models to estimate \textbf{phytoplankton absorption (aph)} - a proxy for phytoplankton distribution - using a bayesian modeling framework.
-
+Here, we propose circumventing the atmospheric complexity of coastal areas by using top-of-the-atmosphere radiance \textbf{(TOA)} along with some additional ancillary input. We develop and compare alternative models to estimate phytoplankton absorption (\textbf{aph}) - a proxy for phytoplankton distribution - using a bayesian modeling framework.
 %----------------------------------------------------------------------------------------
 %	OBJECTIVES
 %----------------------------------------------------------------------------------------
-
-\color{DarkSlateGray} % DarkSlateGray color for the rest of the content
+\color{Black} 
 
 \section*{Objectives}
 
 \begin{enumerate}
-    \item Estimate \textbf{aph} at 6 spectral bands from \textbf{TOA}.
-    \item Develop feature-selecting \underline{\emph{Bayesian linear and nonlinear models}}.
+    \item Estimate phytoplankton distribution in coastal regions by modeling \textbf{aph}.
+    \item Develop feature selecting \underline{\emph{Bayesian linear and nonlinear models}}.
     \item Use performance assessment and information theory for evaluation and model selection.
 \end{enumerate}
+\color{DarkSlateGray} 
 %----------------------------------------------------------------------------------------
 %	MATERIALS AND METHODS
 %----------------------------------------------------------------------------------------
 
 \section*{Materials and Methods}
-Three models were developed:
+
+\subsection*{Model Development}
+Three models were developed using the python probabilistic framework PyMC3\cite{Salvatier:2016}.
 \begin{enumerate}
-    \item Linear regression with regularized horseshoe  (\textbf{RHS}) prior\cite{Vehtari:2017b}; hereafter, \textbf{Model 1}.
+    \item Linear regression with regularized horseshoe prior (\textbf{rHSP})\cite{Vehtari:2017b}; hereafter, \textbf{Model 1}.
     \item Linear regression with \textbf{rHSP} and $1^{st}$ order feature interactions; hereafter, \textbf{Model 2}.
     \item Bayesian neural network \cite{Neal:1996bnn}; hereafter, \textbf{Model 3}.
 \end{enumerate}
-
-%------------------------------------------------
-
-\subsection*{Model Development}
-\begin{center}\vspace{1cm}
+\begin{center}
   \fbox{\includegraphics[trim={6cm 0cm 3cm 0cm}, clip=true, height=16cm, width=0.40\columnwidth]{krusche_diagrams_hs_reg}\hfill}
   \fbox{\includegraphics[trim={1cm 0cm 1.5cm 0cm}, clip=true, height=16cm, width=0.58\columnwidth]{krusche_diagrams_BNN}\hfill}
-  \captionof{figure}{Inference diagram of Bayesian models used. Horizontal lines separate three conceptual groups; top $\rightarrow$ priors, middle $\rightarrow$ likelihood, bottom $\rightarrow$ outcome distribution. \textbf{Left:} Regression with horseshoe priors (Models 1 \& 2). \textbf{Right:} Bayesian neural network (Model 3). Models shown here are hierarchical, built for automatic feature relevance determination.} 
+  \captionof{figure}{\underline{\textbf{Model Structure.}} Horizontal lines separate three conceptual groups; top $\rightarrow$ priors, middle $\rightarrow$ likelihood, bottom $\rightarrow$ outcome distribution. \textbf{Left:} Regression with horseshoe priors (Models 1 \& 2). \textbf{Right:} Bayesian neural network (Model 3). Models shown here are hierarchical, built for automatic feature relevance determination.} 
 \end{center}
 
 
 \subsection*{Data Pre-Processing}
-Data consisted in satellite/in-situ data matchups as in \cite{Bailey:06}, where TOA radiance was matched to in-situ measured phytoplankton absorption at 6 wavelengths; 411, 443, 489, 510, 555, and 670 nm. Pre-processing highlights: \textbf{(1)} principle components (\textbf{PC}) computed from correlated TOA radiance; \textbf{(2)} features include PCs, water temperature (\textbf{SST}), solar zenith angle (\textbf{SolZ}), depth (\textbf{Bathy}); \textbf{(3)} though not strictly required in a Bayesian setting, data was split into training/testing (out-of-sample) sets.
-%\begin{enumerate}
-%    \item Computation of Principle Components (PC) from correlated TOA radiance data.
-%    \item Features include PCs, water temperature, solar zenith angle, bathymetry.
-%    \item Though not strictly required in a Bayesian setting, data was split into training/testing sets.
-%\end{enumerate}
-%\end{center}\vspace{1cm}
+Data consisted in satellite \textbf{TOA} observations matched up, according to \cite{Bailey:06}, \textit{in-situ} \textbf{aph} measurements at 6 wavelengths; 411, 443, 489, 510, 555, and 670 nm. Pre-processing highlights: \textbf{(1)} principle components (\textbf{PC}) computed from correlated TOA radiance; \textbf{(2)} features include PCs, water temperature (\textbf{SST}), solar zenith angle (\textbf{SolZ}), depth (\textbf{Bathy}); \textbf{(3)} although not strictly required in a Bayesian setting, data was split into training/testing (out-of-sample) sets.
 \begin{center}
     \fbox{\includegraphics[height=13.6cm, width=0.56\linewidth]{map}
     \includegraphics[width=0.43\linewidth]{feature_pairwise_map_notarget}}
-    \captionof{figure}{\textbf{Left}: in-situ sampling locations are mostly coastal; continental or insular. \textbf{Right}: Features used in all models.}
+    \captionof{figure}{\textbf{\underline{Data Overview}. Left}: In-situ sampling locations are mostly coastal; continental or insular. \textbf{Right}: Pairwise Pearson correlation of features used in all models.}
 \end{center}
+
 %----------------------------------------------------------------------------------------
 %	RESULTS 
 %----------------------------------------------------------------------------------------
-
+\color{Black}
 \section*{Results}
-\begin{center}\vspace{1cm}
+\begin{center}
   \fbox{\includegraphics[height=15cm, width=0.55\columnwidth]{ppc_1_hs_aphi_411}
   \includegraphics[height=15cm, width=0.43\columnwidth]{test_1_hs_prior_aphi_411}}
   \fbox{\includegraphics[height=15cm, width=0.55\columnwidth]{ppc_2_hs_wi_aphi_411}
   \includegraphics[height=15cm, width=0.43\columnwidth]{test_2_hs_prior_wi_aphi_411}}
   \fbox{\includegraphics[height=15cm, width=0.55\columnwidth]{ppc_3_bnn_aphi_411}
   \includegraphics[height=15cm, width=0.43\columnwidth]{test_3_bnn_aphi_411}}
-  \captionof{figure}{Top, middle and bottom panels correspond to Models 1, 2, and 3, respectively. \textbf{Left} plot shows out-of-sample  observations of \textbf{aph} at 411nm, in relations to model posterior predictive mean, 50\%, and 95\% credibility interval, for aph at 411nm. \textbf{Right} plot shows out-of-sample against model predictions for all bands of \textbf{aph}.}
-\end{center}\vspace{1cm}
+  \captionof{figure}{\underline{\textbf{Model Evaluation on Test Set.}} Top, middle and bottom panels correspond to Models 1, 2, and 3, respectively. \textbf{Left}: Out-of-sample  observations of \textbf{aph} at 411nm, in relations to model posterior predictive mean, 50\%, and 95\% credibility interval. \textbf{Right}: Out-of-sample observations against model predictions, for all bands of \textbf{aph}, with goodness-of-fit scored by mean absolute error, (\textbf{mae}).}
+\end{center}
 
 
 \begin{center}\vspace{1cm}
@@ -145,7 +137,7 @@ Data consisted in satellite/in-situ data matchups as in \cite{Bailey:06}, where 
     Model 1 &  -25.91 &  9.81 &   157.3 &   0.02 &  15.01 &  19.93 \\
     \bottomrule
     \end{tabular}
-    \captionof{table}{\textbf{W}idely \textbf{A}vailable \textbf{I}nformation Criterion for models predicting \textbf{aph} at 411 nm. WAIC takes into account model complexity and the posterior distribution of a model to predict its performance on future (out-of-sample) data. \textbf{WAIC}: lower score predicts better performance; \textbf{pWAIC}: effective number of parameters - a measure of model flexibility ; \textbf{dWAIC}: difference with lowest WAIC ;\textbf{weight}: can be used when ensemble averaging similarly scored models when no clear winner is available; \textbf{SE}: standard error of WAIC estimate ; \textbf{dSE}: standard error of dWAIC. Here, \textbf{Model 3}, the Bayesian Neural Network model is predicted to be a more robust model, and proposed as sole model to be selected.}
+    \captionof{table}{\underline{\textbf{W}idely \textbf{A}vailable \textbf{I}nformation \textbf{C}riterion} for models predicting \textbf{aph} at 411 nm. \textbf{WAIC} takes into account model flexibility and the posterior distribution of a model to predict its performance on future (out-of-sample) data. \textbf{WAIC}: lower score predicts better performance; \textbf{pWAIC}: effective number of parameters - a measure of model flexibility ; \textbf{dWAIC}: difference with lowest WAIC ;\textbf{weight}: can be used when ensemble averaging similarly scored models when no clear winner is available; \textbf{SE}: standard error of WAIC estimate ; \textbf{dSE}: standard error of dWAIC. Here, \textbf{Model 3}, the Bayesian Neural Network model is predicted to be a more robust model, and proposed as sole model to be selected.}
     \end{center}
 %----------------------------------------------------------------------------------------
 %	CONCLUSIONS
@@ -158,6 +150,8 @@ Data consisted in satellite/in-situ data matchups as in \cite{Bailey:06}, where 
 \begin{itemize}
     \item Bayesian inference provides a principled modeling framework.
     \item Assumptions are explicit resulting in criticizable models that can be built to be comparable.
+    \item Models 1 and 2 selected PCs 1-3, SST, SolZ, and Bathy. as significant features (results not show).
+    \item Model 3 selected PCs 1-3 as significant features (results not show).
     \item By all measures, \textbf{Model 3} is predicted to be the better performing alternative.
 \end{itemize}
 
@@ -166,13 +160,10 @@ Data consisted in satellite/in-situ data matchups as in \cite{Bailey:06}, where 
 %----------------------------------------------------------------------------------------
 %	FORTHCOMING RESEARCH
 %----------------------------------------------------------------------------------------
-
 \section*{Problems and Opportunities}
-
-The following items require attention:
 \begin{itemize}
-    \item Tackling symmetry issues that complicates convergence in more complicated models.
-    \item Intensified in-situ data collection for better model construction.
+    \item Symmetry issues complicates convergence in neural networks.
+    \item More \textit{in-situ} data collection needed for more robust model building.
     \item Integration of this and other approaches into existing production systems.
 \end{itemize}
 
