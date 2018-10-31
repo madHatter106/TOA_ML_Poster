@@ -69,7 +69,7 @@
 
 The advent of satellite oceanography has generated tremendous incite in our understanding of global biogeophysical processes in the ocean by providing a synoptic view of phytoplankton distribution dynamics. One of the principle obstacles in this endeavor is the signal contributed to the sensed light field by the atmosphere. Some of this contribution, such as Rayleigh scattering, is straightforward to correct for. However, light contribution by spatio-temporally  variable aerosol distribution has so far been addressed by removing a modelled approximation of its contribution to estimate the water signal. This works  well in the open ocean, but runs into trouble in coastal regions, where both marine and atmospheric layers are often optically complex. 
 
-Here, we propose circumventing the atmospheric complexity of coastal areas by using \textbf{top-of-the-atmosphere radiance (TOA)} as indirect model input. We develop, and compare alternative models to estimate phytoplankton absorption - a proxy for phytoplankton distribution - using a bayesian modeling framework.
+Here, we propose circumventing the atmospheric complexity of coastal areas by using \textbf{top-of-the-atmosphere radiance (TOA)} as indirect model input. We develop, and compare alternative models to estimate \textbf{phytoplankton absorption (aph)} - a proxy for phytoplankton distribution - using a bayesian modeling framework.
 
 %----------------------------------------------------------------------------------------
 %	OBJECTIVES
@@ -80,8 +80,8 @@ Here, we propose circumventing the atmospheric complexity of coastal areas by us
 \section*{Objectives}
 
 \begin{enumerate}
-    \item Estimate phytoplankton absorption - \textbf{aph} - at various spectral bands principally from \textbf{TOA}.
-    \item Develop feature selecting \underline{\emph{Bayesian linear and nonlinear models}}.
+    \item Estimate \textbf{aph} at 6 spectral bands from \textbf{TOA}.
+    \item Develop feature-selecting \underline{\emph{Bayesian linear and nonlinear models}}.
     \item Use performance assessment and information theory for evaluation and model selection.
 \end{enumerate}
 %----------------------------------------------------------------------------------------
@@ -91,7 +91,7 @@ Here, we propose circumventing the atmospheric complexity of coastal areas by us
 \section*{Materials and Methods}
 Three models were developed:
 \begin{enumerate}
-    \item Linear regression with regularized horseshoe prior (\textbf{rHSP})\cite{Vehtari:2017b}; hereafter, \textbf{Model 1}.
+    \item Linear regression with regularized horseshoe  (\textbf{RHS}) prior\cite{Vehtari:2017b}; hereafter, \textbf{Model 1}.
     \item Linear regression with \textbf{rHSP} and $1^{st}$ order feature interactions; hereafter, \textbf{Model 2}.
     \item Bayesian neural network \cite{Neal:1996bnn}; hereafter, \textbf{Model 3}.
 \end{enumerate}
